@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-between align-center mb-3">
+    <h2>Dashboard Overview</h2>
+    <a href="{{ url_for('views.tasks') }}" class="btn btn-primary">Manage Tasks</a>
+</div>
+
+<div class="stats-grid" id="dashboardStats">
+    <div class="stat-card">
+        <div class="stat-value" id="stat-total">-</div>
+        <div class="stat-label">Total Tasks</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="stat-pending">-</div>
+        <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="stat-in-progress">-</div>
+        <div class="stat-label">In Progress</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-value" id="stat-completed">-</div>
+        <div class="stat-label">Completed</div>
+    </div>
+    <div class="stat-card warning">
+        <div class="stat-value" id="stat-high-priority">-</div>
+        <div class="stat-label">High Priority</div>
+    </div>
+    <div class="stat-card danger">
+        <div class="stat-value" id="stat-overdue">-</div>
+        <div class="stat-label">Overdue Tasks</div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', loadDashboard);
+
+async function loadDashboard() {
+    try {
+        const response = await API.dashboard.getStats();
+        const stats = response.stats;
+        
+        document.getElementById('stat-total').innerText = stats.total;
+        document.getElementById('stat-pending').innerText = stats.pending;
+        document.getElementById('stat-in-progress').innerText = stats.in_progress;
+        document.getElementById('stat-completed').innerText = stats.completed;
+        document.getElementById('stat-high-priority').innerText = stats.high_priority;
+        document.getElementById('stat-overdue').innerText = stats.overdue;
+        
+    } catch (err) {
+        showAlert('Failed to load dashboard statistics.');
+    }
+}
+</script>
+{% endblock %}

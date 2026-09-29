@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskFlow - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% if current_user.is_authenticated %}
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('views.dashboard') }}" class="navbar-brand">TaskFlow</a>
+            <ul class="navbar-nav">
+                <li><a href="{{ url_for('views.dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('views.tasks') }}">Tasks</a></li>
+                <li><span class="user-name">Welcome, {{ current_user.name }}</span></li>
+                <li><button id="logoutBtn" class="btn btn-sm btn-danger">Logout</button></li>
+            </ul>
+        </div>
+    </nav>
+    {% endif %}
+
+    <main class="container">
+        <div id="alert-container"></div>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/api.js') }}"></script>
+    {% if current_user.is_authenticated %}
+    <script>
+        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+            try {
+                await API.auth.logout();
+                window.location.href = '/login';
+            } catch (err) {
+                showAlert(err.message);
+            }
+        });
+    </script>
+    {% endif %}
+    {% block scripts %}{% endblock %}
+</body>
+</html>
